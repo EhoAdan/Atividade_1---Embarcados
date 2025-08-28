@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { View, Text, Image, Button, StyleSheet, BackHandler } from 'react-native';
+
+export default function HomeScreen({ navigation }) {
+  return (
+    <View>
+      <View style={styles.container}>
+        <Image style={styles.logo} source={require('./assets/jubs-atividade-01.png')} />
+        <Text style={styles.title} >JUBs - 2025</Text>
+        <Text style={styles.title} >Florianópolis</Text>
+        <Text style={styles.title} >5 à 19 de Outubro</Text>
+      </View>
+      <View style={styles.button}>
+        <Button title="Programação dos Jogos" onPress={() => navigation.navigate('ProgramacaoJogos')} />
+      </View>
+      <View style={styles.button}>
+        <Button title="Ver Alojamentos" onPress={() => navigation.navigate('AlojamentoList')} />
+      </View>
+      <View style={styles.button}>
+        <Button title="Sair" onPress={() => BackHandler.exitApp() } />
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 60,
+  },
+  logo: {
+    height: 160,
+    width: 160,
+  },
+  title: {
+    padding: 30,
+    fontSize: 18,
+  },
+  button: {
+    padding: 15
+  }
+});
