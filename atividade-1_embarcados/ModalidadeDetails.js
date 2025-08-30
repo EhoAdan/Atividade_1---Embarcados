@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Image, Text, View, StyleSheet, Button, Linking, ScrollView} from 'react-native';
 import { IMAGENS_MOD } from './images/Images_Mod';
 import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const getMapUrl = (lat, lng) => {
   return Platform.select({
@@ -13,6 +14,28 @@ const getMapUrl = (lat, lng) => {
 export default function ModalidadeDetailsScreen ({ route, navigation }) {
   const {modalidade} = route.params;
   const img = IMAGENS_MOD[modalidade?.id] || IMAGENS_MOD.default;
+  
+  /* Botão de favorito */
+  const [favorito, setFavorito] = React.useState(false);
+
+  /* Carrega o estado de favorito ou não favorito */
+  React.useEffect(() => {
+    AsyncStorage.getItem(`favorito-${modalidade.id}`).then(value => {
+      if (value) setFavorito(true);
+    });
+  }, [modalidade.id]);
+
+  const toggleFavorito = async () => {
+    if (favorito) {
+      await AsyncStorage.removeItem(`favorito-${modalidade.id}`);
+      setFavorito(false);
+      Alert.alert("Removido dos favoritos");
+    } else {
+      await AsyncStorage.setItem(`favorito-${modalidade.id}`, JSON.stringify(modalidade));
+      setFavorito(true);
+      Alert.alert("Adicionado aos favoritos");
+    }
+  };
   
   return (
     <ScrollView style={{ flex: 1 }} contentContainerStyle={styles.content}>
@@ -27,8 +50,10 @@ export default function ModalidadeDetailsScreen ({ route, navigation }) {
         title="Localização" />
       </View>
       <View style={styles.button} >
-      <Button onPress={() => Linking.openURL(mapUrl) }
-        title="Favoritar" />
+        <Button 
+          onPress={toggleFavorito}
+          title={favorito ? "Remover dos Favoritos" : "Favoritar"} 
+        />
       </View>
       <View style={styles.button} >
         <Button title="Voltar" onPress={() => navigation.navigate('ProgramacaoJogos')} />
